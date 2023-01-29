@@ -25,6 +25,7 @@ open class StoriesAdapter(val stories: List<Story>) :
         holder.binding.contentStoryItem.apply {
             imageView.load(story.photoUrl)
             textViewDescription.text = story.description
+            textViewAuthor.text = story.name
             cardStory.setOnClickListener {
                 val context = root.context
                 val intent = Intent(context, StoryActivity::class.java).apply {
@@ -43,29 +44,20 @@ open class StoriesAdapter(val stories: List<Story>) :
     ) : RecyclerView.ViewHolder(binding.root) {
         fun show(index: Long) {
             binding.contentStoryPlaceholderItem.root.apply {
-                animate()
-                    .alpha(0.0F)
-                    .setStartDelay(START_FACTOR_DURATION * index)
-                    .setDuration(
-                        CROSSFADE_DURATION
-                    )
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            isVisible = false
-                        }
-                    })
-                    .start()
+                animate().alpha(0.0F).setStartDelay(START_FACTOR_DURATION * index).setDuration(
+                    CROSSFADE_DURATION
+                ).setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        isVisible = false
+                    }
+                }).start()
             }
 
             binding.contentStoryItem.root.apply {
                 alpha = 0.0F
-                animate()
-                    .alpha(1.0F)
-                    .setStartDelay(START_FACTOR_DURATION * index)
-                    .setDuration(
-                        CROSSFADE_DURATION
-                    )
-                    .start()
+                animate().alpha(1.0F).setStartDelay(START_FACTOR_DURATION * index).setDuration(
+                    CROSSFADE_DURATION
+                ).start()
             }
         }
 
@@ -89,6 +81,5 @@ class StoriesLoadingAdapter : RecyclerView.Adapter<StoriesLoadingAdapter.ViewHol
 
     override fun getItemCount(): Int = 10
 
-    class ViewHolder(binding: StoryPlaceholderItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(binding: StoryPlaceholderItemBinding) : RecyclerView.ViewHolder(binding.root)
 }

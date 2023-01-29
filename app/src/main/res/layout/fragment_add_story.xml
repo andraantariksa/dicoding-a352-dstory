@@ -52,12 +52,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add"
-            app:layout_constraintBottom_toBottomOf="@+id/imageButton"
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewGallery"
             app:layout_constraintEnd_toEndOf="@+id/textInputLayoutDescription"
-            app:layout_constraintTop_toTopOf="@+id/imageButton" />
+            app:layout_constraintTop_toTopOf="@+id/imageViewGallery" />
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imageButton"
+            android:id="@+id/imageViewGallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -72,15 +72,51 @@
             app:shapeAppearanceOverlay="@style/CircleImageView"
             app:srcCompat="@drawable/baseline_image_24" />
 
-        <TextView
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:background="#FFFFFF"
+            android:elevation="8dp"
+            android:padding="4dp"
+            android:scaleType="centerInside"
+            app:contentPadding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewGallery"
+            app:layout_constraintStart_toEndOf="@+id/imageViewGallery"
+            app:layout_constraintTop_toTopOf="@+id/imageViewGallery"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:srcCompat="@drawable/baseline_camera_alt_24" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewRemove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:background="#FFFFFF"
+            android:elevation="8dp"
+            android:padding="4dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            app:contentPadding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewCamera"
+            app:layout_constraintStart_toEndOf="@+id/imageViewCamera"
+            app:layout_constraintTop_toTopOf="@+id/imageViewCamera"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:srcCompat="@drawable/baseline_close_24"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/textViewFormError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/imageButton"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton"
+            app:layout_constraintStart_toStartOf="@+id/imageViewGallery"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewGallery"
             app:layout_goneMarginBottom="0dp"
             tools:text="Some kind of error" />
     </androidx.constraintlayout.widget.ConstraintLayout>

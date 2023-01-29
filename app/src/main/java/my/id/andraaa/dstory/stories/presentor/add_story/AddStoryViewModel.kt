@@ -13,6 +13,8 @@ sealed class AddStoryAction {
     class ChangeImage(val value: Uri) : AddStoryAction()
     class ChangeDescription(val value: String) : AddStoryAction()
     object ProceedAddStory : AddStoryAction()
+    object Reset : AddStoryAction()
+    object RemoveImage : AddStoryAction()
 }
 
 data class AddStoryState(
@@ -36,6 +38,8 @@ class AddStoryViewModel(
                 }
                 state.copy(addStoryState = NetworkResource.Loading())
             }
+            is AddStoryAction.Reset -> AddStoryState()
+            AddStoryAction.RemoveImage -> state.copy(image = null)
         }
     }
 
