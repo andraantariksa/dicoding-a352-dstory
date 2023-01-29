@@ -13,7 +13,7 @@ import my.id.andraaa.dstory.stories.domain.NetworkResource
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StoryActivity : AppCompatActivity() {
-    private val storyViewModel by viewModel<StoryViewModel>()
+    private val viewModel by viewModel<StoryViewModel>()
     private lateinit var binding: ActivityStoryBinding
     private lateinit var storyId: String
 
@@ -21,7 +21,7 @@ class StoryActivity : AppCompatActivity() {
         super.onStart()
 
         storyId = intent.getStringExtra(STORY_ID_EXTRA) ?: ""
-        storyViewModel.dispatch(StoryAction.LoadStory(storyId))
+        viewModel.dispatch(StoryAction.LoadStory(storyId))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +34,12 @@ class StoryActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding.contentError.buttonRetry.setOnClickListener {
-            storyViewModel.dispatch(StoryAction.LoadStory(storyId))
+            viewModel.dispatch(StoryAction.LoadStory(storyId))
         }
 
         lifecycleScope.launchWhenResumed {
             launch {
-                storyViewModel.state.collectLatest { state ->
+                viewModel.state.collectLatest { state ->
                     when (state.story) {
                         is NetworkResource.Loaded -> {
                             val story = state.story.data

@@ -37,11 +37,10 @@ interface DicodingStoryService {
     ): BaseResponse
 
     @Multipart
-    @Headers("Content-Type: multipart/form-data")
     @POST("stories")
     suspend fun addStory(
         @Header("Authorization") token: String,
-        @Part file: MultipartBody.Part,
+        @Part file: MultipartBody.Part?,
         @Part("description") description: String,
         @Part("lat") lat: Float,
         @Part("lon") lon: Float,

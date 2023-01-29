@@ -16,10 +16,19 @@ import my.id.andraaa.dstory.stories.presentor.common.SpaceItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StoriesFragment : Fragment() {
-    private val storiesViewModel by viewModel<StoriesViewModel>()
+    private val viewModel by viewModel<StoriesViewModel>()
     private val addStoryBottomSheet = AddStoryBottomSheet()
 
     private lateinit var binding: FragmentStoriesBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.dispatch(StoriesAction.LoadStories)
+        addStoryBottomSheet.onFinished = {
+            viewModel.dispatch(StoriesAction.LoadStories)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -30,20 +39,22 @@ class StoriesFragment : Fragment() {
     }
 
     private fun setupUI() = lifecycleScope.launchWhenResumed {
+        binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
         binding.floatingActionButton.setOnClickListener {
-            addStoryBottomSheet.show(childFragmentManager, null)
+            if (!addStoryBottomSheet.isAdded) {
+                addStoryBottomSheet.showNow(childFragmentManager, null)
+            }
         }
         binding.errorContent.buttonRetry.setOnClickListener {
-            storiesViewModel.dispatch(StoriesAction.LoadStories)
+            viewModel.dispatch(StoriesAction.LoadStories)
         }
 
         launch {
-            storiesViewModel.state.collectLatest { state ->
+            viewModel.state.collectLatest { state ->
                 when (state.stories) {
                     is NetworkResource.Loaded -> {
                         binding.imageViewEmpty.isVisible = state.stories.data.isEmpty()
                         binding.recyclerViewStories.adapter = StoriesAdapter(state.stories.data)
-                        binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
                         binding.recyclerViewStories.isVisible = true
                         binding.errorContent.root.isVisible = false
                     }
@@ -55,7 +66,6 @@ class StoriesFragment : Fragment() {
                     }
                     is NetworkResource.Loading -> {
                         binding.recyclerViewStories.adapter = StoriesLoadingAdapter()
-                        binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
                         binding.recyclerViewStories.isVisible = true
                         binding.errorContent.root.isVisible = false
                     }

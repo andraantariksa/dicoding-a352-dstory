@@ -3,7 +3,7 @@ package my.id.andraaa.dstory.stories.presentor.add_story
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import my.id.andraaa.dstory.stories.data.AuthDataSource
+import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.domain.NetworkResource
 import my.id.andraaa.dstory.stories.util.MVIViewModel
 
@@ -24,7 +24,7 @@ data class AddStoryState(
 }
 
 class AddStoryViewModel(
-    private val authDataSource: AuthDataSource,
+    private val dicodingStoryDataSource: DicodingStoryDataSource,
 ) : MVIViewModel<AddStoryState, AddStoryAction, AddStorySideEffect>(AddStoryState()) {
     override fun reducer(state: AddStoryState, action: AddStoryAction): AddStoryState {
         return when (action) {
@@ -34,15 +34,14 @@ class AddStoryViewModel(
                 viewModelScope.launch {
                     addStory(state.image, state.description)
                 }
-                state
+                state.copy(addStoryState = NetworkResource.Loading())
             }
         }
     }
 
-    private suspend fun addStory(image: Uri?, password: String) {
-        _state.value = state.value.copy(addStoryState = NetworkResource.Loading())
+    private suspend fun addStory(image: Uri?, description: String) {
         try {
-//            authDataSource.signIn(email, password)
+            dicodingStoryDataSource.addStory(image, description, 0.0F, 0.0F)
             _state.value = state.value.copy(addStoryState = NetworkResource.Loaded(Unit))
         } catch (exception: Exception) {
             _state.value = state.value.copy(addStoryState = NetworkResource.Error(exception))

@@ -14,7 +14,9 @@ class SpaceItemDecoration(private val verticalGap: Int, private val horizontalGa
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        outRect.bottom = verticalGap
-        outRect.right = horizontalGap
+        outRect.bottom = verticalGap / 2
+        outRect.top = verticalGap / 2
+        outRect.right = horizontalGap / 2
+        outRect.left = horizontalGap / 2
     }
 }

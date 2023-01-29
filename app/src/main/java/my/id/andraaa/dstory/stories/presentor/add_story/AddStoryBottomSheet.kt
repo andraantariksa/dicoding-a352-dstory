@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -21,20 +22,25 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentAddStoryBinding
     private val viewModel by viewModel<AddStoryViewModel>()
 
-    private val photoPickerActivityRequest =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                viewModel.dispatch(AddStoryAction.ChangeImage(uri))
+    private lateinit var photoPickerActivityRequest: ActivityResultLauncher<PickVisualMediaRequest>
+    var onFinished: (() -> Unit)? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        photoPickerActivityRequest =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    viewModel.dispatch(AddStoryAction.ChangeImage(uri))
+                }
             }
-        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddStoryBinding.inflate(layoutInflater)
-
         setupUI()
-
         return binding.root
     }
 
@@ -58,16 +64,20 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                         binding.textViewFormError.setTextColor(
                             resources.getColor(R.color.danger)
                         )
+                        binding.buttonAddStory.isEnabled = true
                     }
                     is NetworkResource.Loaded -> {
+                        this@AddStoryBottomSheet.onFinished?.invoke()
                         this@AddStoryBottomSheet.dismiss()
                     }
                     is NetworkResource.Loading -> {
                         binding.textViewFormError.text =
                             this@AddStoryBottomSheet.getText(R.string.loading)
+                        binding.buttonAddStory.isEnabled = false
                     }
                     null -> {
                         binding.textViewFormError.text = ""
+                        binding.buttonAddStory.isEnabled = true
                     }
                 }
             }
@@ -78,6 +88,9 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
         }
         binding.imageButton.setOnClickListener {
             photoPickerActivityRequest.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+        binding.buttonAddStory.setOnClickListener {
+            viewModel.dispatch(AddStoryAction.ProceedAddStory)
         }
     }
 }

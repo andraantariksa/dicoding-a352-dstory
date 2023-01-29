@@ -18,6 +18,7 @@ import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
 
 
@@ -31,6 +32,7 @@ val ApplicationModule = module {
             .addInterceptor(logging)
             .build()
         Retrofit.Builder().baseUrl(DicodingStoryService.BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(get()))
             .client(client)
             .build()
@@ -39,7 +41,7 @@ val ApplicationModule = module {
 
     single { AuthDataSource(androidContext(), get(), get()) }
 
-    single { DicodingStoryDataSource(androidContext(), get(), get(), get()) }
+    single { DicodingStoryDataSource(get(), get(), androidContext()) }
 
     viewModelOf(::MainViewModel)
     viewModelOf(::AddStoryViewModel)

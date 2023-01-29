@@ -20,10 +20,6 @@ sealed class StoriesAction {
 class StoriesViewModel(private val dicodingStoryDataSource: DicodingStoryDataSource) :
     MVIViewModel<StoriesState, StoriesAction, StoriesSideEffect>(StoriesState()) {
 
-    init {
-        dispatch(StoriesAction.LoadStories)
-    }
-
     override fun reducer(state: StoriesState, action: StoriesAction): StoriesState {
         return when (action) {
             StoriesAction.LoadStories -> {
