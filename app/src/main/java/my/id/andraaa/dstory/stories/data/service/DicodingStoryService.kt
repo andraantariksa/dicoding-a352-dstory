@@ -55,8 +55,11 @@ interface DicodingStoryService {
         @Query("location") filterWithLocation: Int = 0,
     ): StoriesResponse
 
-    @GET("/storyies/:id")
-    suspend fun getStory(@Header("Authorization") token: String, @Path("id") id: Int): StoryResponse
+    @GET("stories/{id}")
+    suspend fun getStory(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): StoryResponse
 
     companion object {
         const val BASE_URL = "https://story-api.dicoding.dev/v1/"

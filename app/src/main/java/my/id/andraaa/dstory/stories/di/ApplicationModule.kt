@@ -10,6 +10,7 @@ import my.id.andraaa.dstory.stories.presentor.auth.signin.SignInViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signup.SignUpViewModel
 import my.id.andraaa.dstory.stories.presentor.main.MainViewModel
 import my.id.andraaa.dstory.stories.presentor.main.stories.StoriesViewModel
+import my.id.andraaa.dstory.stories.presentor.story.StoryViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -42,6 +43,7 @@ val ApplicationModule = module {
 
     viewModelOf(::MainViewModel)
     viewModelOf(::AddStoryViewModel)
+    viewModelOf(::StoryViewModel)
     viewModelOf(::StoriesViewModel)
     viewModelOf(::SignInViewModel)
     viewModelOf(::SignUpViewModel)

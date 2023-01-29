@@ -20,30 +20,35 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        setupUI()
+        setupAuthState()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setupAuthState()
     }
 
-    private fun setupUI() {
-        val navController = binding.fragmentContainerView.findNavController()
-        binding.bottomNavigation.setupWithNavController(navController)
-
+    private fun setupAuthState() {
         lifecycleScope.launchWhenResumed {
             launch {
                 mainViewModel.state.collectLatest { state ->
-                    if (state.session is NetworkResource.Loaded && state.session.data == null) {
-                        this@MainActivity.startActivity(
-                            Intent(
-                                this@MainActivity,
-                                SignInActivity::class.java
+                    if (state.session is NetworkResource.Loaded) {
+                        if (state.session.data == null) {
+                            this@MainActivity.startActivity(
+                                Intent(
+                                    this@MainActivity,
+                                    SignInActivity::class.java
+                                )
                             )
-                        )
+                        } else {
+                            setContentView(binding.root)
+
+                            val navController =
+                                binding.fragmentContainerView.findNavController()
+                            binding.bottomNavigation.setupWithNavController(navController)
+                        }
                     }
                 }
             }

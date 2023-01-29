@@ -9,7 +9,6 @@
         android:id="@+id/constraintLayoutRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         tools:context=".stories.presentor.main.MainActivity">
 
         <ImageView
@@ -26,39 +25,52 @@
             tools:srcCompat="@tools:sample/backgrounds/scenic"
             tools:visibility="visible" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextDescription"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutDescription"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_margin_x"
             android:layout_marginTop="16dp"
-            android:ems="10"
-            android:maxHeight="200dp"
-            android:singleLine="false"
+            android:hint="@string/description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:maxHeight="200dp"
+                android:minHeight="100dp"
+                android:singleLine="false" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonAddStory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/add"
-            app:layout_constraintEnd_toEndOf="@+id/editTextDescription"
-            app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageButton"
+            app:layout_constraintEnd_toEndOf="@+id/textInputLayoutDescription"
+            app:layout_constraintTop_toTopOf="@+id/imageButton" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:adjustViewBounds="true"
             android:background="#FFFFFF"
             android:elevation="8dp"
             android:padding="4dp"
             android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonAddStory"
-            app:layout_constraintStart_toStartOf="@+id/editTextDescription"
-            app:layout_constraintTop_toTopOf="@+id/buttonAddStory"
+            app:contentPadding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textInputLayoutDescription"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutDescription"
             app:shapeAppearanceOverlay="@style/CircleImageView"
             app:srcCompat="@drawable/baseline_image_24" />
 

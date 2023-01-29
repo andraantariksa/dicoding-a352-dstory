@@ -11,7 +11,7 @@
     <string name="sign_in">Sign In</string>
     <string name="password">Password</string>
     <string name="got_no_accounts_yet">Got no accounts yet?</string>
-    <string name="e_mail">E-mail</string>
+    <string name="email">E-mail</string>
     <string name="loading">Loading…</string>
     <string name="name">Name</string>
     <string name="got_an_account">Got an account?</string>
@@ -26,4 +26,9 @@
     <string name="no_stories_available">No stories available</string>
     <string name="add_new_story">Add new story</string>
     <string name="story_image">Story image</string>
+    <string name="password_invalid">Password is invalid</string>
+    <string name="email_invalid">Email is invalid</string>
+    <string name="retry">Retry</string>
+    <string name="story_not_found">Story is not found</string>
+    <string name="description">Description</string>
 </resources>

@@ -33,10 +33,10 @@ class SignInActivity : AppCompatActivity() {
                 var signInButtonEnabled = it.formIsValid()
                 if (it.signInState is NetworkResource.Loading) {
                     signInButtonEnabled = false
-                    binding.editTextEmail.isEnabled = false
+//                    binding.editTextEmail.isEnabled = false
                     binding.editTextPassword.isEnabled = false
                 } else {
-                    binding.editTextEmail.isEnabled = true
+//                    binding.editTextEmail.isEnabled = true
                     binding.editTextPassword.isEnabled = true
                 }
                 binding.buttonSignIn.isEnabled = signInButtonEnabled

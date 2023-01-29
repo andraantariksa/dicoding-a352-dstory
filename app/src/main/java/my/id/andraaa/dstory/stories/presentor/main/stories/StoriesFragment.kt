@@ -33,6 +33,9 @@ class StoriesFragment : Fragment() {
         binding.floatingActionButton.setOnClickListener {
             addStoryBottomSheet.show(childFragmentManager, null)
         }
+        binding.errorContent.buttonRetry.setOnClickListener {
+            storiesViewModel.dispatch(StoriesAction.LoadStories)
+        }
 
         launch {
             storiesViewModel.state.collectLatest { state ->
@@ -41,11 +44,20 @@ class StoriesFragment : Fragment() {
                         binding.imageViewEmpty.isVisible = state.stories.data.isEmpty()
                         binding.recyclerViewStories.adapter = StoriesAdapter(state.stories.data)
                         binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
+                        binding.recyclerViewStories.isVisible = true
+                        binding.errorContent.root.isVisible = false
                     }
-                    is NetworkResource.Error -> {}
+                    is NetworkResource.Error -> {
+                        binding.recyclerViewStories.isVisible = false
+                        binding.errorContent.root.isVisible = true
+                        binding.errorContent.textViewError.text =
+                            "Error: ${state.stories.error.message}"
+                    }
                     is NetworkResource.Loading -> {
                         binding.recyclerViewStories.adapter = StoriesLoadingAdapter()
                         binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
+                        binding.recyclerViewStories.isVisible = true
+                        binding.errorContent.root.isVisible = false
                     }
                 }
 

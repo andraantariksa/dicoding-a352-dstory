@@ -1,3 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="form_margin_top">128dp</dimen>
+    <dimen name="activity_margin_x">16dp</dimen>
 </resources>

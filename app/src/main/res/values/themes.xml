@@ -1,7 +1,8 @@
 <resources>
 
-    <style name="Theme.DStory" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#FF5722</item>
+    <style name="Theme.DStory" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/redish</item>
+        <item name="colorSecondary">@color/pink</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
 
@@ -13,4 +14,7 @@
     <style name="Theme.DStory.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.DStory.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <color name="redish">#FF5722</color>
+    <color name="pink">#FBCABE</color>
 </resources>

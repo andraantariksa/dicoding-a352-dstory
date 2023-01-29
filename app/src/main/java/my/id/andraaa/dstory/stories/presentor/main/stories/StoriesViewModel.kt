@@ -28,7 +28,11 @@ class StoriesViewModel(private val dicodingStoryDataSource: DicodingStoryDataSou
         return when (action) {
             StoriesAction.LoadStories -> {
                 viewModelScope.launch {
-                    _state.value = state.copy(stories = NetworkResource.Loaded(loadStories()))
+                    try {
+                        _state.value = state.copy(stories = NetworkResource.Loaded(loadStories()))
+                    } catch (exception: Exception) {
+                        _state.value = state.copy(stories = NetworkResource.Error(exception))
+                    }
                 }
                 state.copy(stories = NetworkResource.Loading())
             }

@@ -26,7 +26,7 @@ class DicodingStoryDataSource(
         return stories.listStory
     }
 
-    suspend fun getStory(id: Int): Story {
+    suspend fun getStory(id: String): Story {
         val token = authDataSource.getSession()?.token
         val story = dicodingStoryService.getStory("Bearer $token", id)
         return story.story
