@@ -70,10 +70,20 @@ class SignInActivity : AppCompatActivity() {
         }
 
         binding.editTextEmail.doOnTextChanged { email, _, _, _ ->
-            viewModel.dispatch(SignInAction.ChangeEmail(email.toString()))
+            viewModel.dispatch(
+                SignInAction.ChangeEmail(
+                    email.toString(),
+                    binding.editTextEmail.error?.isNotEmpty() ?: false
+                )
+            )
         }
         binding.editTextPassword.doOnTextChanged { password, _, _, _ ->
-            viewModel.dispatch(SignInAction.ChangePassword(password.toString()))
+            viewModel.dispatch(
+                SignInAction.ChangePassword(
+                    password.toString(),
+                    binding.editTextPassword.error?.isNotEmpty() ?: false
+                )
+            )
         }
         binding.buttonSignIn.setOnClickListener {
             viewModel.dispatch(SignInAction.ProceedAddStory)

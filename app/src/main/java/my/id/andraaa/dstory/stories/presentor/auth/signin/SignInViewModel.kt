@@ -9,17 +9,19 @@ import my.id.andraaa.dstory.stories.util.MVIViewModel
 object SignInSideEffect
 
 sealed class SignInAction {
-    class ChangeEmail(val value: String) : SignInAction()
-    class ChangePassword(val value: String) : SignInAction()
+    class ChangeEmail(val value: String, val isError: Boolean) : SignInAction()
+    class ChangePassword(val value: String, val isError: Boolean) : SignInAction()
     object ProceedAddStory : SignInAction()
 }
 
 data class SignInState(
     val email: String = "",
+    val emailIsError: Boolean = true,
     val password: String = "",
+    val passwordIsError: Boolean = true,
     val signInState: NetworkResource<Unit>? = null
 ) {
-    fun formIsValid(): Boolean = email.isNotEmpty() && password.length < 8
+    fun formIsValid(): Boolean = !emailIsError && !passwordIsError
 }
 
 class SignInViewModel(
@@ -27,8 +29,14 @@ class SignInViewModel(
 ) : MVIViewModel<SignInState, SignInAction, SignInSideEffect>(SignInState()) {
     override fun reducer(state: SignInState, action: SignInAction): SignInState {
         return when (action) {
-            is SignInAction.ChangeEmail -> state.copy(email = action.value)
-            is SignInAction.ChangePassword -> state.copy(password = action.value)
+            is SignInAction.ChangeEmail -> state.copy(
+                email = action.value,
+                emailIsError = action.isError
+            )
+            is SignInAction.ChangePassword -> state.copy(
+                password = action.value,
+                passwordIsError = action.isError
+            )
             SignInAction.ProceedAddStory -> {
                 viewModelScope.launch {
                     signIn(state.email, state.password)

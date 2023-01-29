@@ -82,10 +82,20 @@ class SignUpActivity : AppCompatActivity() {
             viewModel.dispatch(SignUpAction.ChangeName(name.toString()))
         }
         binding.editTextEmail.doOnTextChanged { email, _, _, _ ->
-            viewModel.dispatch(SignUpAction.ChangeEmail(email.toString()))
+            viewModel.dispatch(
+                SignUpAction.ChangeEmail(
+                    email.toString(),
+                    binding.editTextEmail.error?.isNotEmpty() ?: false
+                )
+            )
         }
         binding.editTextPassword.doOnTextChanged { password, _, _, _ ->
-            viewModel.dispatch(SignUpAction.ChangePassword(password.toString()))
+            viewModel.dispatch(
+                SignUpAction.ChangePassword(
+                    password.toString(),
+                    binding.editTextPassword.error?.isNotEmpty() ?: false
+                )
+            )
         }
         binding.buttonSignUp.setOnClickListener {
             viewModel.dispatch(SignUpAction.ProceedSignUp)
