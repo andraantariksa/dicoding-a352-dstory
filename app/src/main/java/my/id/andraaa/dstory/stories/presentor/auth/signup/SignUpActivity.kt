@@ -13,6 +13,7 @@ import my.id.andraaa.dstory.R
 import my.id.andraaa.dstory.databinding.ActivitySignUpBinding
 import my.id.andraaa.dstory.stories.domain.NetworkResource
 import my.id.andraaa.dstory.stories.presentor.add_story.AddStoryBottomSheet
+import my.id.andraaa.dstory.stories.presentor.auth.signin.SignInActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SignUpActivity : AppCompatActivity() {
@@ -60,8 +61,10 @@ class SignUpActivity : AppCompatActivity() {
                         this@SignUpActivity.startActivity(
                             Intent(
                                 this@SignUpActivity,
-                                AddStoryBottomSheet::class.java
-                            )
+                                SignInActivity::class.java
+                            ).apply {
+                                flags = FLAG_ACTIVITY_CLEAR_TOP
+                            }
                         )
                     }
                     is NetworkResource.Loading -> {

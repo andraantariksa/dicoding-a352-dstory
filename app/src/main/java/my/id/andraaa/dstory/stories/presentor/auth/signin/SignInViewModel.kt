@@ -19,7 +19,7 @@ data class SignInState(
     val password: String = "",
     val signInState: NetworkResource<Unit>? = null
 ) {
-    fun formIsValid(): Boolean = email.isNotEmpty() && password.isNotEmpty()
+    fun formIsValid(): Boolean = email.isNotEmpty() && password.length < 8
 }
 
 class SignInViewModel(
@@ -33,13 +33,12 @@ class SignInViewModel(
                 viewModelScope.launch {
                     signIn(state.email, state.password)
                 }
-                state
+                state.copy(signInState = NetworkResource.Loading())
             }
         }
     }
 
     private suspend fun signIn(email: String, password: String) {
-        _state.value = state.value.copy(signInState = NetworkResource.Loading())
         try {
             authDataSource.signIn(email, password)
             _state.value = state.value.copy(signInState = NetworkResource.Loaded(Unit))

@@ -33,10 +33,10 @@ class SignInActivity : AppCompatActivity() {
                 var signInButtonEnabled = it.formIsValid()
                 if (it.signInState is NetworkResource.Loading) {
                     signInButtonEnabled = false
-//                    binding.editTextEmail.isEnabled = false
+                    binding.editTextEmail.isEnabled = false
                     binding.editTextPassword.isEnabled = false
                 } else {
-//                    binding.editTextEmail.isEnabled = true
+                    binding.editTextEmail.isEnabled = true
                     binding.editTextPassword.isEnabled = true
                 }
                 binding.buttonSignIn.isEnabled = signInButtonEnabled
@@ -53,7 +53,9 @@ class SignInActivity : AppCompatActivity() {
                             Intent(
                                 this@SignInActivity,
                                 MainActivity::class.java
-                            )
+                            ).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            }
                         )
                     }
                     is NetworkResource.Loading -> {
@@ -80,7 +82,9 @@ class SignInActivity : AppCompatActivity() {
             this@SignInActivity.startActivity(
                 Intent(
                     this@SignInActivity, SignUpActivity::class.java
-                )
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
             )
         }
     }
