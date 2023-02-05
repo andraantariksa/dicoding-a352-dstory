@@ -39,7 +39,6 @@ interface DicodingStoryService {
     @Multipart
     @POST("stories")
     suspend fun addStory(
-        @Header("Authorization") token: String,
         @Part file: MultipartBody.Part?,
         @Part("description") description: String,
         @Part("lat") lat: Float,
@@ -48,15 +47,13 @@ interface DicodingStoryService {
 
     @GET("stories")
     suspend fun getStories(
-        @Header("Authorization") token: String,
-        @Query("page") page: Int? = null,
+        @Query("page") page: Int = 1,
         @Query("size") size: Int? = null,
         @Query("location") filterWithLocation: Int = 0,
     ): StoriesResponse
 
     @GET("stories/{id}")
     suspend fun getStory(
-        @Header("Authorization") token: String,
         @Path("id") id: String
     ): StoryResponse
 

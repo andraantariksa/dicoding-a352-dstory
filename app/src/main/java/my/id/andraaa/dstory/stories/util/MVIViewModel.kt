@@ -13,7 +13,9 @@ abstract class MVIViewModel<STATE, ACTION, SIDE_EFFECT>(initialState: STATE) : V
     protected val _sideEffect = MutableSharedFlow<SIDE_EFFECT>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    protected abstract fun reducer(state: STATE, action: ACTION): STATE
+    protected open fun reducer(state: STATE, action: ACTION): STATE {
+        return state
+    }
 
     open fun dispatch(action: ACTION) {
         _state.value = reducer(state.value, action)

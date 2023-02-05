@@ -1,7 +1,5 @@
 package my.id.andraaa.dstory.stories.data
 
-import android.content.Context
-import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
@@ -12,31 +10,25 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class DicodingStoryDataSource(
     private val dicodingStoryService: DicodingStoryService,
-    private val authDataSource: AuthDataSource,
-    private val context: Context
 ) {
-    suspend fun getStories(): List<Story> {
-        val token = authDataSource.getSession()?.token
-        val stories = dicodingStoryService.getStories("Bearer $token")
+    suspend fun getStories(page: Int = 1): List<Story> {
+        val stories = dicodingStoryService.getStories(page)
         return stories.listStory
     }
 
     suspend fun getStory(id: String): Story {
-        val token = authDataSource.getSession()?.token
-        val story = dicodingStoryService.getStory("Bearer $token", id)
+        val story = dicodingStoryService.getStory(id)
         return story.story
     }
 
-    suspend fun addStory(imageUri: Uri?, description: String, lat: Float, lon: Float) =
+    suspend fun addStory(imageBytes: ByteArray?, description: String, lat: Float, lon: Float) =
         withContext(Dispatchers.IO) {
-            val filePart = if (imageUri != null) {
-                val stream = context.contentResolver.openInputStream(imageUri)!!
-
-                val bytes = stream.readBytes()
-                val body =
-                    bytes.toRequestBody("multipart/form-data".toMediaTypeOrNull(), 0, bytes.size)
-
-                stream.close()
+            val filePart = if (imageBytes != null) {
+                val body = imageBytes.toRequestBody(
+                    "multipart/form-data".toMediaTypeOrNull(),
+                    0,
+                    imageBytes.size
+                )
 
                 MultipartBody.Part.createFormData(
                     "photo",
@@ -47,9 +39,7 @@ class DicodingStoryDataSource(
                 null
             }
 
-            val session = authDataSource.getSession()
             dicodingStoryService.addStory(
-                "Bearer ${session!!.token}",
                 filePart,
                 description,
                 lat,

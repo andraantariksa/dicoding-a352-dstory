@@ -9,12 +9,13 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import my.id.andraaa.dstory.R
 import my.id.andraaa.dstory.databinding.FragmentAddStoryBinding
@@ -39,19 +40,27 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
         photoPickerActivityRequest =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    viewModel.dispatch(
-                        AddStoryAction.ChangeImage(
-                            tempFile.getContentUri(
-                                requireContext()
-                            )
-                        )
-                    )
+                    viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                        launch(Dispatchers.IO) {
+                            context?.let { context ->
+                                val stream = context.contentResolver.openInputStream(uri)!!
+                                val bytes = stream.readBytes()
+                                stream.close()
+                                viewModel.dispatch(AddStoryAction.ChangeImage(bytes))
+                            }
+                        }
+                    }
                 }
             }
         cameraActivityRequest =
             registerForActivityResult(ActivityResultContracts.TakePicture()) { saved ->
                 if (saved) {
-                    viewModel.dispatch(AddStoryAction.ChangeImage(tempFile.toUri()))
+                    viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                        launch(Dispatchers.IO) {
+                            val bytes = tempFile.readBytes()
+                            viewModel.dispatch(AddStoryAction.ChangeImage(bytes))
+                        }
+                    }
                 }
             }
     }
@@ -70,7 +79,19 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    private fun setupUI() = lifecycleScope.launchWhenResumed {
+    private fun setupUI() = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        viewModel.state
+            .map { state -> state.image }
+            .distinctUntilChanged()
+            .onEach {
+                if (it != null) {
+                    binding.imageView.isVisible = true
+                    binding.imageView.load(it.value)
+                } else {
+                    binding.imageView.isVisible = false
+                }
+            }.launchIn(this)
+
         launch {
             viewModel.state.collectLatest {
                 var signInButtonEnabled = it.formIsValid()
@@ -87,9 +108,7 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                     binding.imageViewRemove.isEnabled = true
                 }
                 binding.buttonAddStory.isEnabled = signInButtonEnabled
-                binding.imageView.isVisible = it.image != null
                 binding.imageViewRemove.isVisible = it.image != null
-                binding.imageView.setImageURI(it.image)
 
                 when (it.addStoryState) {
                     is NetworkResource.Error -> {

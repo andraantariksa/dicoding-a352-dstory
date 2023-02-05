@@ -58,8 +58,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewGallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
             android:background="#FFFFFF"
@@ -74,7 +74,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewCamera"
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:adjustViewBounds="true"
@@ -91,8 +91,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewRemove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:adjustViewBounds="true"
             android:background="#FFFFFF"
