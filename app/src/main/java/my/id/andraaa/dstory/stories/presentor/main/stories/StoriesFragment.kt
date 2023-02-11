@@ -67,7 +67,6 @@ class StoriesFragment : Fragment() {
         binding.floatingActionButton.setOnClickListener {
             if (!addStoryBottomSheet.isAdded) {
                 addStoryBottomSheet.showNow(childFragmentManager, null)
-
             }
         }
         binding.errorContent.buttonRetry.setOnClickListener {

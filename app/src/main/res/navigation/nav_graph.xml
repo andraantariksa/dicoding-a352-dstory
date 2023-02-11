@@ -11,6 +11,11 @@
         android:label="@string/stories"
         tools:layout="@layout/fragment_stories" />
     <fragment
+        android:id="@+id/maps"
+        android:name="my.id.andraaa.dstory.stories.presentor.main.maps.MapsFragment"
+        android:label="@string/maps"
+        tools:layout="@layout/fragment_maps" />
+    <fragment
         android:id="@+id/profile"
         android:name="my.id.andraaa.dstory.stories.presentor.main.profile.ProfileFragment"
         android:label="@string/profile"

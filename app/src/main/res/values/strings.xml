@@ -31,4 +31,5 @@
     <string name="retry">Retry</string>
     <string name="story_not_found">Story is not found</string>
     <string name="description">Description</string>
+    <string name="maps">Maps</string>
 </resources>

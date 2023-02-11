@@ -6,6 +6,11 @@
         android:icon="@drawable/baseline_auto_stories_24"
         android:title="@string/stories" />
     <item
+        android:id="@+id/maps"
+        android:enabled="true"
+        android:icon="@drawable/baseline_map_24"
+        android:title="@string/maps" />
+    <item
         android:id="@+id/profile"
         android:enabled="true"
         android:icon="@drawable/baseline_account_circle_24"

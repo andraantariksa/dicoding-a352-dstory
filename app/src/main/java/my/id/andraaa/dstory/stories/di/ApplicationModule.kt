@@ -11,6 +11,7 @@ import my.id.andraaa.dstory.stories.presentor.add_story.AddStoryViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signin.SignInViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signup.SignUpViewModel
 import my.id.andraaa.dstory.stories.presentor.main.MainViewModel
+import my.id.andraaa.dstory.stories.presentor.main.maps.MapsViewModel
 import my.id.andraaa.dstory.stories.presentor.main.stories.StoriesViewModel
 import my.id.andraaa.dstory.stories.presentor.story.StoryViewModel
 import okhttp3.OkHttpClient
@@ -61,5 +62,6 @@ val ApplicationModule = module {
     viewModelOf(::StoryViewModel)
     viewModelOf(::StoriesViewModel)
     viewModelOf(::SignInViewModel)
+    viewModelOf(::MapsViewModel)
     viewModelOf(::SignUpViewModel)
 }
