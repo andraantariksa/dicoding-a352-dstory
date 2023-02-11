@@ -177,7 +177,8 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
         }
         binding.imageViewShareCurrentLocation.setOnClickListener {
             PermissionX.init(this@AddStoryBottomSheet).permissions(
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(
                     deniedList,

@@ -55,16 +55,15 @@ class MapsFragment : Fragment() {
             PermissionX.init(activity).permissions(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-                .explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList ->
-                    scope.showRequestReasonDialog(
-                        deniedList, "DStory Maps needs your location permission", "OK", "Cancel"
-                    )
-                }.request { _, _, _ ->
-                    context?.let {
-                        viewModel.dispatch(MapsAction.FetchCurrentLocation(it))
-                    }
+            ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList, "DStory Maps needs your location permission", "OK", "Cancel"
+                )
+            }.request { _, _, _ ->
+                context?.let {
+                    viewModel.dispatch(MapsAction.FetchCurrentLocation(it))
                 }
+            }
         }
 
         return binding.root
@@ -87,8 +86,7 @@ class MapsFragment : Fragment() {
             val tag = marker.tag as? DStoryInfoWindowAdapter.Tag
             val intent = Intent(context, StoryActivity::class.java).apply {
                 putExtra(
-                    StoryActivity.STORY_ID_EXTRA,
-                    tag?.id
+                    StoryActivity.STORY_ID_EXTRA, tag?.id
                 )
             }
             context?.startActivity(intent)
