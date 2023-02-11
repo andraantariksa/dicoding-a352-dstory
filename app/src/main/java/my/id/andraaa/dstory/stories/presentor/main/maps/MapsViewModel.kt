@@ -79,7 +79,7 @@ class MapsViewModel(
 
         if (ActivityCompat.checkSelfPermission(
                 context,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             _state.value = state.value.copy(userLocation = NetworkResource.Loading())

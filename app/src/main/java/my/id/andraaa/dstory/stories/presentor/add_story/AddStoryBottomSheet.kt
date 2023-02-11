@@ -1,6 +1,8 @@
 package my.id.andraaa.dstory.stories.presentor.add_story
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,11 +11,13 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -80,23 +84,20 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupUI() = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-        viewModel.state
-            .map { state -> state.image }
-            .distinctUntilChanged()
-            .onEach {
-                if (it != null) {
-                    binding.imageView.isVisible = true
-                    binding.imageView.load(it.value)
-                } else {
-                    binding.imageView.isVisible = false
-                }
-            }.launchIn(this)
+        viewModel.state.map { state -> state.image }.distinctUntilChanged().onEach {
+            if (it != null) {
+                binding.imageView.isVisible = true
+                binding.imageView.load(it.value)
+            } else {
+                binding.imageView.isVisible = false
+            }
+        }.launchIn(this)
 
         launch {
             viewModel.state.collectLatest {
-                var signInButtonEnabled = it.formIsValid()
+                var addStoryButtonEnabled = it.formIsValid()
                 if (it.addStoryState is NetworkResource.Loading) {
-                    signInButtonEnabled = false
+                    addStoryButtonEnabled = false
                     binding.editTextDescription.isEnabled = false
                     binding.imageViewCamera.isEnabled = false
                     binding.imageViewGallery.isEnabled = false
@@ -107,8 +108,31 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                     binding.imageViewGallery.isEnabled = true
                     binding.imageViewRemove.isEnabled = true
                 }
-                binding.buttonAddStory.isEnabled = signInButtonEnabled
+                binding.buttonAddStory.isEnabled = addStoryButtonEnabled
                 binding.imageViewRemove.isVisible = it.image != null
+
+                if (it.shareCurrentLocation) {
+                    binding.imageViewShareCurrentLocation.setBackgroundColor(
+                        requireActivity().getColor(
+                            R.color.primary
+                        )
+                    )
+                    binding.imageViewShareCurrentLocation.setImageResource(R.drawable.baseline_location_on_24_active)
+
+                    if (ActivityCompat.checkSelfPermission(
+                            requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        viewModel.dispatch(AddStoryAction.ToggleShareCurrentLocation)
+                    }
+                } else {
+                    binding.imageViewShareCurrentLocation.setBackgroundColor(
+                        requireActivity().getColor(
+                            R.color.background
+                        )
+                    )
+                    binding.imageViewShareCurrentLocation.setImageResource(R.drawable.baseline_location_on_24)
+                }
 
                 when (it.addStoryState) {
                     is NetworkResource.Error -> {
@@ -151,8 +175,22 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
         binding.imageViewRemove.setOnClickListener {
             viewModel.dispatch(AddStoryAction.RemoveImage)
         }
+        binding.imageViewShareCurrentLocation.setOnClickListener {
+            PermissionX.init(this@AddStoryBottomSheet).permissions(
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "DStory Maps needs your location permission to share your location",
+                    "OK",
+                    "Cancel"
+                )
+            }.request { _, _, _ ->
+                viewModel.dispatch(AddStoryAction.ToggleShareCurrentLocation)
+            }
+        }
         binding.buttonAddStory.setOnClickListener {
-            viewModel.dispatch(AddStoryAction.ProceedAddStory)
+            viewModel.dispatch(AddStoryAction.ProceedAddStory(requireContext()))
         }
     }
 }

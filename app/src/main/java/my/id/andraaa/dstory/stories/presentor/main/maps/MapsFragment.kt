@@ -46,23 +46,27 @@ class MapsFragment : Fragment() {
         mapFragment = null
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        PermissionX.init(this).permissions(Manifest.permission.ACCESS_FINE_LOCATION)
-            .explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList ->
-                scope.showRequestReasonDialog(
-                    deniedList, "DStory Maps needs your location permission", "OK", "Cancel"
-                )
-            }.request { _, _, _ ->
-                viewModel.dispatch(MapsAction.FetchCurrentLocation(requireContext()))
-            }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
+
+        activity?.let { activity ->
+            PermissionX.init(activity).permissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+                .explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList ->
+                    scope.showRequestReasonDialog(
+                        deniedList, "DStory Maps needs your location permission", "OK", "Cancel"
+                    )
+                }.request { _, _, _ ->
+                    context?.let {
+                        viewModel.dispatch(MapsAction.FetchCurrentLocation(it))
+                    }
+                }
+        }
+
         return binding.root
     }
 
