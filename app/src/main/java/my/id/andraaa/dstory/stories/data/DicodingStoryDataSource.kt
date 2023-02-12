@@ -11,7 +11,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class DicodingStoryDataSource(
     private val dicodingStoryService: DicodingStoryService,
 ) {
-    suspend fun getStories(page: Int = 1): List<Story> {
+    suspend fun getStories(page: Int = DICODING_STORY_STARTING_PAGE): List<Story> {
         val stories = dicodingStoryService.getStories(page)
         return stories.listStory
     }
@@ -60,5 +60,9 @@ class DicodingStoryDataSource(
         dicodingStoryService.addStory(
             filePart, description, lat, lon
         )
+    }
+
+    companion object {
+        const val DICODING_STORY_STARTING_PAGE = 1
     }
 }

@@ -75,7 +75,7 @@ class StoriesFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.state.onEach { state ->
-                state.stories.onEach {
+                state.storiesFlow.onEach {
                     pagingAdapter.submitData(it)
                 }
                     .flowOn(Dispatchers.IO)

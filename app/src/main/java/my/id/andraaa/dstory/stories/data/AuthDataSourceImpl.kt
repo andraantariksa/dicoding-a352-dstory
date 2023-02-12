@@ -9,24 +9,21 @@ import kotlinx.coroutines.withContext
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryException
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
 import my.id.andraaa.dstory.stories.data.service.response.BaseResponse
+import my.id.andraaa.dstory.stories.domain.AuthDataSource
+import my.id.andraaa.dstory.stories.domain.Session
 import retrofit2.HttpException
 
-data class Session(
-    val name: String,
-    val token: String
-)
-
-class AuthDataSource(
+class AuthDataSourceImpl(
     context: Context,
     moshi: Moshi,
     private val dicodingStoryService: DicodingStoryService,
-) {
+) : AuthDataSource {
     private val baseAdapter = moshi.adapter(BaseResponse::class.java).lenient()
     private val sharedPreferences =
         EncryptedSharedPreferences(context, "settings", MasterKey(context))
 
     @Suppress("RedundantSuspendModifier")
-    suspend fun getSession(): Session? {
+    override suspend fun getSession(): Session? {
         val token = sharedPreferences.getString(AUTH_TOKEN_KEY, null)
         val name = sharedPreferences.getString(NAME_KEY, null)
         return if (name != null && token != null) {
@@ -42,7 +39,7 @@ class AuthDataSource(
             .putString(AUTH_TOKEN_KEY, session.token)
             .putString(NAME_KEY, session.name).apply()
 
-    suspend fun signIn(email: String, password: String) = withContext(Dispatchers.IO) {
+    override suspend fun signIn(email: String, password: String) = withContext(Dispatchers.IO) {
         try {
             val response =
                 dicodingStoryService.login(DicodingStoryService.LoginData(email, password))
@@ -59,7 +56,7 @@ class AuthDataSource(
         }
     }
 
-    suspend fun signUp(name: String, email: String, password: String) =
+    override suspend fun signUp(name: String, email: String, password: String): Unit =
         withContext(Dispatchers.IO) {
             try {
                 dicodingStoryService.register(
@@ -79,7 +76,7 @@ class AuthDataSource(
             }
         }
 
-    fun signOut() {
+    override fun signOut() {
         sharedPreferences.edit().remove(AUTH_TOKEN_KEY).apply()
     }
 

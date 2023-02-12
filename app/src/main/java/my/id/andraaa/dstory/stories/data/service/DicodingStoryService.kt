@@ -2,6 +2,7 @@ package my.id.andraaa.dstory.stories.data.service
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource.Companion.DICODING_STORY_STARTING_PAGE
 import my.id.andraaa.dstory.stories.data.service.response.*
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -47,7 +48,7 @@ interface DicodingStoryService {
 
     @GET("stories")
     suspend fun getStories(
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int = DICODING_STORY_STARTING_PAGE,
         @Query("size") size: Int? = null,
         @Query("location") filterWithLocation: Int = 0,
     ): StoriesResponse

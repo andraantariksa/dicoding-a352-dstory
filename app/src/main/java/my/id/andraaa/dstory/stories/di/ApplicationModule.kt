@@ -4,9 +4,10 @@ package my.id.andraaa.dstory.stories.di
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
-import my.id.andraaa.dstory.stories.data.AuthDataSource
+import my.id.andraaa.dstory.stories.data.AuthDataSourceImpl
 import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
+import my.id.andraaa.dstory.stories.domain.AuthDataSource
 import my.id.andraaa.dstory.stories.presentor.add_story.AddStoryViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signin.SignInViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signup.SignUpViewModel
@@ -34,7 +35,7 @@ val ApplicationModule = module {
 //            .addInterceptor(logging)
             .addInterceptor { chain ->
                 var requestBuilder = chain.request().newBuilder()
-                val session = runBlocking { get<AuthDataSource>().getSession() }
+                val session = runBlocking { get<AuthDataSourceImpl>().getSession() }
                 session?.token?.let { token ->
                     requestBuilder = requestBuilder
                         .addHeader("Authorization", "Bearer $token")
@@ -44,16 +45,16 @@ val ApplicationModule = module {
             .build()
     }
 
-    single {
+    single<DicodingStoryService> {
         Retrofit.Builder().baseUrl(DicodingStoryService.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(get()))
             .client(get())
             .build()
-            .create<DicodingStoryService>()
+            .create()
     }
 
-    single { AuthDataSource(androidContext(), get(), get()) }
+    single<AuthDataSource> { AuthDataSourceImpl(androidContext(), get(), get()) }
 
     single { DicodingStoryDataSource(get()) }
 

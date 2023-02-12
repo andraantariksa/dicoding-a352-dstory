@@ -12,17 +12,22 @@ class StoriesPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Story> {
         val currentPage = params.key ?: 1
+        val prevKey = if (currentPage == 1) {
+            null
+        } else {
+            currentPage - 1
+        }
         val stories = dicodingStoryDataSource.getStories(currentPage)
         return if (stories.isEmpty()) {
             LoadResult.Page(
                 data = listOf(),
-                prevKey = null,
+                prevKey = prevKey,
                 nextKey = null,
             )
         } else {
             LoadResult.Page(
                 data = stories,
-                prevKey = null,
+                prevKey = prevKey,
                 nextKey = currentPage + 1
             )
         }

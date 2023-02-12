@@ -1,40 +1,63 @@
 package my.id.andraaa.dstory
 
+import androidx.paging.PagingSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
-import my.id.andraaa.dstory.stories.data.DicodingStoryServiceMock
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
-import org.junit.Before
+import my.id.andraaa.dstory.stories.data.service.response.StoriesResponse
+import my.id.andraaa.dstory.stories.data.service.response.Story
+import my.id.andraaa.dstory.stories.presentor.main.stories.StoriesPagingSource
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class StoriesPagingSourceTest {
-    private lateinit var dicodingStoryService: DicodingStoryService
-    private lateinit var dicodingStoryDataSource: DicodingStoryDataSource
+    @Test
+    fun fetchFirstPage_isCorrect() = runTest {
+        val storyFactory = StoryFactory()
 
-    @Before
-    fun setUp() {
-        dicodingStoryService = DicodingStoryServiceMock()
-        dicodingStoryDataSource = DicodingStoryDataSource(dicodingStoryService)
+        val page1 = List(5) {
+            storyFactory.createStory()
+        }
+
+        val dicodingStoryServiceMock = mock<DicodingStoryService> {
+            onBlocking { getStories(1) } doReturn StoriesResponse(
+                error = false, message = "", listStory = page1
+            )
+        }
+        val pagingSource = StoriesPagingSource(DicodingStoryDataSource(dicodingStoryServiceMock))
+
+        val firstPageResult = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1, loadSize = 0, placeholdersEnabled = false
+            )
+        ) as? PagingSource.LoadResult.Page<Int, Story>
+        assertNotNull(firstPageResult)
+        assertEquals(page1, firstPageResult?.data)
+        verify(dicodingStoryServiceMock).getStories(1)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun addition_isCorrect() = runTest {
-        val pagingSource = StoriesPagingSource(dicodingStoryDataSource)
-//        assertEquals(
-//            expected = PagingSource.LoadResult.Page(
-//                data = listOf(mockPosts[0], mockPosts[1]),
-//                prevKey = null,
-//                nextKey = 3
-//            ),
-//            actual = pagingSource.load(
-//                PagingSource.LoadParams.Refresh(
-//                    key = null,
-//                    loadSize = 2,
-//                    placeholdersEnabled = false
-//                )
-//            ),
-//        )
+    fun fetchLastPage_isCorrect() = runTest {
+        val dicodingStoryServiceMock = mock<DicodingStoryService> {
+            onBlocking { getStories(4) } doReturn StoriesResponse(
+                error = false, message = "", listStory = listOf()
+            )
+        }
+        val pagingSource = StoriesPagingSource(DicodingStoryDataSource(dicodingStoryServiceMock))
+
+        val lastPageResult = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 4, loadSize = 0, placeholdersEnabled = false
+            )
+        ) as? PagingSource.LoadResult.Page<Int, Story>
+        assertNotNull(lastPageResult)
+        assertEquals(listOf<Story>(), lastPageResult?.data)
+        verify(dicodingStoryServiceMock).getStories(4)
     }
 }
