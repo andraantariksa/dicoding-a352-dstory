@@ -42,8 +42,8 @@ interface DicodingStoryService {
     suspend fun addStory(
         @Part file: MultipartBody.Part,
         @Part("description") description: String,
-        @Part("lat") lat: Float,
-        @Part("lon") lon: Float,
+        @Part("lat") lat: Float?,
+        @Part("lon") lon: Float?,
     ): BaseResponse
 
     @GET("stories")

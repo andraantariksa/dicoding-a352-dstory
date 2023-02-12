@@ -48,7 +48,7 @@ class DicodingStoryDataSourceImpl(
     }
 
     override suspend fun addStory(
-        imageBytes: ByteArray, description: String, lat: Float, lon: Float
+        imageBytes: ByteArray, description: String, lat: Float?, lon: Float?
     ): Unit = withContext(Dispatchers.IO) {
         val body = imageBytes.toRequestBody(
             "multipart/form-data".toMediaTypeOrNull(), 0, imageBytes.size

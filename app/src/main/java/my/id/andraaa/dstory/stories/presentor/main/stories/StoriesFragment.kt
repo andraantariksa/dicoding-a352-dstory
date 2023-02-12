@@ -59,6 +59,7 @@ class StoriesFragment : Fragment() {
         _addStoryBottomSheet = AddStoryBottomSheet().apply {
             onFinished = {
                 pagingAdapter.refresh()
+                binding.recyclerViewStories.layoutManager!!.scrollToPosition(0)
             }
         }
 
@@ -74,20 +75,21 @@ class StoriesFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.state.onEach { state ->
-                state.storiesFlow.onEach {
+            viewModel.storiesFlow
+                .onEach {
                     pagingAdapter.submitData(it)
                 }
-                    .flowOn(Dispatchers.IO)
-                    .launchIn(this@launchWhenResumed)
+                .flowOn(Dispatchers.IO)
+                .launchIn(this@launchWhenResumed)
 
-                pagingAdapter.loadStateFlow.onEach {
+//            viewModel.state.onEach { state ->
+//                pagingAdapter.loadStateFlow.onEach {
 //                    val refreshState = it.refresh
-
-                }
-                    .flowOn(Dispatchers.Main)
-                    .launchIn(this@launchWhenResumed)
-            }.launchIn(this)
+//
+//                }
+//                    .flowOn(Dispatchers.Main)
+//                    .launchIn(this@launchWhenResumed)
+//            }.launchIn(this)
         }
     }
 }

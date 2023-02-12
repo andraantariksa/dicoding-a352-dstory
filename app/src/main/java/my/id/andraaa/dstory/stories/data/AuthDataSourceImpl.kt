@@ -35,9 +35,10 @@ class AuthDataSourceImpl(
 
     @Suppress("RedundantSuspendModifier")
     private suspend fun setToken(session: Session) =
-        sharedPreferences.edit()
-            .putString(AUTH_TOKEN_KEY, session.token)
-            .putString(NAME_KEY, session.name).apply()
+        sharedPreferences.edit().apply {
+            putString(AUTH_TOKEN_KEY, session.token)
+            putString(NAME_KEY, session.name)
+        }.apply()
 
     override suspend fun signIn(email: String, password: String) = withContext(Dispatchers.IO) {
         try {

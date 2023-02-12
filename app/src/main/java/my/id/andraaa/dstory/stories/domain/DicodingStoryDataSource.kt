@@ -11,6 +11,6 @@ interface DicodingStoryDataSource {
 
     suspend fun getStory(id: String): Story
     suspend fun addStory(
-        imageBytes: ByteArray, description: String, lat: Float, lon: Float
+        imageBytes: ByteArray, description: String, lat: Float?, lon: Float?
     )
 }

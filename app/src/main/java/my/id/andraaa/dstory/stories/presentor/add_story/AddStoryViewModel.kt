@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,21 +62,13 @@ class AddStoryViewModel(
                 context, Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED)
         ) {
-            var exception = Exception("Unknown error")
-            val result = try {
+            try {
                 val fusedLocation = LocationServices.getFusedLocationProviderClient(context)
-                Tasks.await(fusedLocation.lastLocation)
-            } catch (_exception: Exception) {
-                exception = _exception
-                null
-            }
-
-            if (result == null) {
+                Tasks.await(fusedLocation.getCurrentLocation(Priority.PRIORITY_LOW_POWER, null))
+            } catch (exception: Exception) {
                 _state.value = state.value.copy(addStoryState = NetworkResource.Error(exception))
                 return
             }
-
-            result
         } else {
             null
         }
@@ -84,8 +77,8 @@ class AddStoryViewModel(
             dicodingStoryDataSource.addStory(
                 image?.value ?: ByteArray(0),
                 description,
-                location!!.latitude.toFloat(),
-                location.longitude.toFloat()
+                location?.latitude?.toFloat(),
+                location?.longitude?.toFloat()
             )
             _state.value = state.value.copy(addStoryState = NetworkResource.Loaded(Unit))
         } catch (exception: Exception) {

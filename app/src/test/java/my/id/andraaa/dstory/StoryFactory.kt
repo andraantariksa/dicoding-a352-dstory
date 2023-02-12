@@ -1,6 +1,7 @@
 package my.id.andraaa.dstory
 
 import my.id.andraaa.dstory.stories.data.service.response.Story
+import kotlin.random.Random
 
 class StoryFactory {
     fun createStory(): Story {
@@ -8,7 +9,7 @@ class StoryFactory {
             createdAt = "",
             id = "story-FvU4u0Vp2S3PMsFg",
             photoUrl = "https://story-api.dicoding.dev/images/stories/photos-1641623658595_dummy-pic.png",
-            name = "Dimas",
+            name = "Dimas ${Random.nextInt()}",
             description = "Lorem Ipsum",
             lat = -10.212,
             lon = -16.002
