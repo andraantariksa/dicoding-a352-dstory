@@ -3,7 +3,7 @@ package my.id.andraaa.dstory
 import androidx.paging.PagingSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
+import my.id.andraaa.dstory.stories.data.DicodingStoryDataSourceImpl
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
 import my.id.andraaa.dstory.stories.data.service.response.StoriesResponse
 import my.id.andraaa.dstory.stories.data.service.response.Story
@@ -30,7 +30,8 @@ class StoriesPagingSourceTest {
                 error = false, message = "", listStory = page1
             )
         }
-        val pagingSource = StoriesPagingSource(DicodingStoryDataSource(dicodingStoryServiceMock))
+        val pagingSource =
+            StoriesPagingSource(DicodingStoryDataSourceImpl(dicodingStoryServiceMock))
 
         val firstPageResult = pagingSource.load(
             PagingSource.LoadParams.Refresh(
@@ -49,7 +50,8 @@ class StoriesPagingSourceTest {
                 error = false, message = "", listStory = listOf()
             )
         }
-        val pagingSource = StoriesPagingSource(DicodingStoryDataSource(dicodingStoryServiceMock))
+        val pagingSource =
+            StoriesPagingSource(DicodingStoryDataSourceImpl(dicodingStoryServiceMock))
 
         val lastPageResult = pagingSource.load(
             PagingSource.LoadParams.Refresh(

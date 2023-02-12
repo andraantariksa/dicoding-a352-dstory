@@ -9,9 +9,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.data.service.response.Story
 import my.id.andraaa.dstory.stories.domain.Coordinate
+import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.domain.NetworkResource
 import my.id.andraaa.dstory.stories.util.MVIViewModel
 

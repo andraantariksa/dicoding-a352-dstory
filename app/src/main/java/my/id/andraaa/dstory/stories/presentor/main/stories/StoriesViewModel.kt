@@ -2,8 +2,8 @@ package my.id.andraaa.dstory.stories.presentor.main.stories
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.data.service.response.Story
+import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.util.MVIViewModel
 
 data class StoriesState(

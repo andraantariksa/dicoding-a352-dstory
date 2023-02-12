@@ -2,7 +2,7 @@ package my.id.andraaa.dstory.stories.presentor.auth.signin
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import my.id.andraaa.dstory.stories.data.AuthDataSourceImpl
+import my.id.andraaa.dstory.stories.domain.AuthDataSource
 import my.id.andraaa.dstory.stories.domain.NetworkResource
 import my.id.andraaa.dstory.stories.util.MVIViewModel
 
@@ -25,7 +25,7 @@ data class SignInState(
 }
 
 class SignInViewModel(
-    private val authDataSource: AuthDataSourceImpl,
+    private val authDataSource: AuthDataSource,
 ) : MVIViewModel<SignInState, SignInAction, SignInSideEffect>(SignInState()) {
     override fun reducer(state: SignInState, action: SignInAction): SignInState {
         return when (action) {

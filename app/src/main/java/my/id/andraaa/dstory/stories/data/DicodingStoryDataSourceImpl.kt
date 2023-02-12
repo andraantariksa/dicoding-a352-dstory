@@ -4,20 +4,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
 import my.id.andraaa.dstory.stories.data.service.response.Story
+import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class DicodingStoryDataSource(
+class DicodingStoryDataSourceImpl(
     private val dicodingStoryService: DicodingStoryService,
-) {
-    suspend fun getStories(page: Int = DICODING_STORY_STARTING_PAGE): List<Story> {
+) : DicodingStoryDataSource {
+    override suspend fun getStories(page: Int): List<Story> {
         val stories = dicodingStoryService.getStories(page)
         return stories.listStory
     }
 
-    suspend fun getStoriesQuantity(
-        quantity: Int = 100, withLocationOnly: Boolean = false
+    override suspend fun getStoriesQuantity(
+        quantity: Int, withLocationOnly: Boolean
     ): List<Story> {
         val stories = mutableListOf<Story>()
         var currentPage = 1
@@ -41,12 +42,12 @@ class DicodingStoryDataSource(
         return stories.take(quantity)
     }
 
-    suspend fun getStory(id: String): Story {
+    override suspend fun getStory(id: String): Story {
         val story = dicodingStoryService.getStory(id)
         return story.story
     }
 
-    suspend fun addStory(
+    override suspend fun addStory(
         imageBytes: ByteArray, description: String, lat: Float, lon: Float
     ): Unit = withContext(Dispatchers.IO) {
         val body = imageBytes.toRequestBody(

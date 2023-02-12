@@ -2,7 +2,7 @@ package my.id.andraaa.dstory.stories.data.service
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource.Companion.DICODING_STORY_STARTING_PAGE
+import my.id.andraaa.dstory.stories.data.DicodingStoryDataSourceImpl.Companion.DICODING_STORY_STARTING_PAGE
 import my.id.andraaa.dstory.stories.data.service.response.*
 import okhttp3.MultipartBody
 import retrofit2.http.*

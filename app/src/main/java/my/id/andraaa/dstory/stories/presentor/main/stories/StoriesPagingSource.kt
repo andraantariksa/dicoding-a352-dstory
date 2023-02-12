@@ -2,8 +2,8 @@ package my.id.andraaa.dstory.stories.presentor.main.stories
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.data.service.response.Story
+import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 
 class StoriesPagingSource(
     private val dicodingStoryDataSource: DicodingStoryDataSource

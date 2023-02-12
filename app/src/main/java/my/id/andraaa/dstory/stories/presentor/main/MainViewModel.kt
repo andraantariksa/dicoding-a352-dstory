@@ -2,7 +2,7 @@ package my.id.andraaa.dstory.stories.presentor.main
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import my.id.andraaa.dstory.stories.data.AuthDataSourceImpl
+import my.id.andraaa.dstory.stories.domain.AuthDataSource
 import my.id.andraaa.dstory.stories.domain.NetworkResource
 import my.id.andraaa.dstory.stories.domain.Session
 import my.id.andraaa.dstory.stories.util.MVIViewModel
@@ -19,7 +19,7 @@ sealed class MainAction {
 object MainSideEffect
 
 
-class MainViewModel(private val authDataSource: AuthDataSourceImpl) :
+class MainViewModel(private val authDataSource: AuthDataSource) :
     MVIViewModel<MainState, MainAction, MainSideEffect>(MainState()) {
 
     init {

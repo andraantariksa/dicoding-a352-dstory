@@ -2,7 +2,7 @@ package my.id.andraaa.dstory.stories.presentor.auth.signup
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import my.id.andraaa.dstory.stories.data.AuthDataSourceImpl
+import my.id.andraaa.dstory.stories.domain.AuthDataSource
 import my.id.andraaa.dstory.stories.domain.NetworkResource
 import my.id.andraaa.dstory.stories.util.MVIViewModel
 
@@ -27,17 +27,15 @@ data class SignUpState(
 }
 
 class SignUpViewModel(
-    private val authDataSource: AuthDataSourceImpl
+    private val authDataSource: AuthDataSource
 ) : MVIViewModel<SignUpState, SignUpAction, SignUpSideEffect>(SignUpState()) {
     override fun reducer(state: SignUpState, action: SignUpAction): SignUpState {
         return when (action) {
             is SignUpAction.ChangeEmail -> state.copy(
-                email = action.value,
-                emailIsError = action.error
+                email = action.value, emailIsError = action.error
             )
             is SignUpAction.ChangePassword -> state.copy(
-                password = action.value,
-                passwordIsError = action.error
+                password = action.value, passwordIsError = action.error
             )
             is SignUpAction.ChangeName -> state.copy(
                 name = action.value

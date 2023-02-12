@@ -5,9 +5,10 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
 import my.id.andraaa.dstory.stories.data.AuthDataSourceImpl
-import my.id.andraaa.dstory.stories.data.DicodingStoryDataSource
+import my.id.andraaa.dstory.stories.data.DicodingStoryDataSourceImpl
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
 import my.id.andraaa.dstory.stories.domain.AuthDataSource
+import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 import my.id.andraaa.dstory.stories.presentor.add_story.AddStoryViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signin.SignInViewModel
 import my.id.andraaa.dstory.stories.presentor.auth.signup.SignUpViewModel
@@ -35,28 +36,23 @@ val ApplicationModule = module {
 //            .addInterceptor(logging)
             .addInterceptor { chain ->
                 var requestBuilder = chain.request().newBuilder()
-                val session = runBlocking { get<AuthDataSourceImpl>().getSession() }
+                val session = runBlocking { get<AuthDataSource>().getSession() }
                 session?.token?.let { token ->
-                    requestBuilder = requestBuilder
-                        .addHeader("Authorization", "Bearer $token")
+                    requestBuilder = requestBuilder.addHeader("Authorization", "Bearer $token")
                 }
                 chain.proceed(requestBuilder.build())
-            }
-            .build()
+            }.build()
     }
 
     single<DicodingStoryService> {
         Retrofit.Builder().baseUrl(DicodingStoryService.BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(MoshiConverterFactory.create(get()))
-            .client(get())
-            .build()
-            .create()
+            .addConverterFactory(MoshiConverterFactory.create(get())).client(get()).build().create()
     }
 
     single<AuthDataSource> { AuthDataSourceImpl(androidContext(), get(), get()) }
 
-    single { DicodingStoryDataSource(get()) }
+    single<DicodingStoryDataSource> { DicodingStoryDataSourceImpl(get()) }
 
     viewModelOf(::MainViewModel)
     viewModelOf(::AddStoryViewModel)
