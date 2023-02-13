@@ -16,7 +16,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class StoriesPagingSourceTest {
+class StoryPagingSourceTest {
     @Test
     fun fetchFirstPage_isCorrect() = runTest {
         val storyFactory = StoryFactory()

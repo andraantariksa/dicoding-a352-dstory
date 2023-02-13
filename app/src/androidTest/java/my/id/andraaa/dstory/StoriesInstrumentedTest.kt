@@ -61,8 +61,8 @@ class StoriesInstrumentedTest {
                 override suspend fun addStory(
                     file: MultipartBody.Part,
                     description: String,
-                    lat: Float,
-                    lon: Float
+                    lat: Float?,
+                    lon: Float?
                 ): BaseResponse {
                     TODO("Not yet implemented")
                 }
