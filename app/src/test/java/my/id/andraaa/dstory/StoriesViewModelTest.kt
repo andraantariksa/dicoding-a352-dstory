@@ -13,6 +13,7 @@ import my.id.andraaa.dstory.stories.data.service.response.Story
 import my.id.andraaa.dstory.stories.presentor.main.stories.StoriesViewModel
 import my.id.andraaa.dstory.utils.MainDispatcherRule
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.doReturn
@@ -50,16 +51,8 @@ class StoriesViewModelTest {
             )
         }
         val dicodingStoryDataSource = DicodingStoryDataSourceImpl(dicodingStoryServiceMock)
-//        val pagingSource = StoriesPagingSource(dicodingStoryDataSource)
         val viewModel = StoriesViewModel(dicodingStoryDataSource)
 
-//        pagingSource.load(
-//            PagingSource.LoadParams.Append(
-//                1,
-//                0,
-//                false
-//            )
-//        )
         val differ = AsyncPagingDataDiffer(
             diffCallback = Story.DIFF_UTIL,
             updateCallback = object : ListUpdateCallback {
@@ -78,7 +71,42 @@ class StoriesViewModelTest {
 
         advanceUntilIdle()
 
+        assertNotNull(differ.snapshot().items)
+        assertEquals(page1.size + page2.size, differ.snapshot().size)
         assertEquals(page1 + page2, differ.snapshot().items)
+
+        job.cancel()
+    }
+
+    @Test
+    fun storiesFlow_isEmpty() = runTest {
+        val dicodingStoryServiceMock = mock<DicodingStoryService> {
+            onBlocking { getStories(1) } doReturn StoriesResponse(
+                error = false, message = "", listStory = listOf()
+            )
+        }
+        val dicodingStoryDataSource = DicodingStoryDataSourceImpl(dicodingStoryServiceMock)
+        val viewModel = StoriesViewModel(dicodingStoryDataSource)
+
+        val differ = AsyncPagingDataDiffer(
+            diffCallback = Story.DIFF_UTIL,
+            updateCallback = object : ListUpdateCallback {
+                override fun onInserted(position: Int, count: Int) {}
+                override fun onRemoved(position: Int, count: Int) {}
+                override fun onMoved(fromPosition: Int, toPosition: Int) {}
+                override fun onChanged(position: Int, count: Int, payload: Any?) {}
+            },
+            workerDispatcher = Dispatchers.Main
+        )
+        val job = viewModel.storiesFlow
+            .onEach {
+                differ.submitData(it)
+            }
+            .launchIn(this)
+
+        advanceUntilIdle()
+
+        assertEquals(listOf<Story>(), differ.snapshot().items)
 
         job.cancel()
     }
