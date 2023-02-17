@@ -19,9 +19,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class StoriesFragment : Fragment() {
     private val viewModel by viewModel<StoriesViewModel>()
 
-    private var _addStoryBottomSheet: AddStoryBottomSheet? = null
-    private val addStoryBottomSheet: AddStoryBottomSheet
-        get() = _addStoryBottomSheet!!
     private var _pagingAdapter: StoriesPagingAdapter? = null
     private val pagingAdapter: StoriesPagingAdapter
         get() = _pagingAdapter!!
@@ -36,7 +33,6 @@ class StoriesFragment : Fragment() {
         repeat(childFragmentManager.backStackEntryCount) {
             childFragmentManager.popBackStack()
         }
-        _addStoryBottomSheet = null
         _pagingAdapter = null
         _binding = null
     }
@@ -56,17 +52,21 @@ class StoriesFragment : Fragment() {
                 footer = PagingLoadStateAdapter(this)
             )
         }
-        _addStoryBottomSheet = AddStoryBottomSheet().apply {
-            onFinished = {
-                pagingAdapter.refresh()
-                binding.recyclerViewStories.layoutManager!!.scrollToPosition(0)
-            }
-        }
 
         binding.recyclerViewStories.adapter = pagingAdapter
         binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
         binding.floatingActionButton.setOnClickListener {
-            if (!addStoryBottomSheet.isAdded) {
+            if (childFragmentManager.backStackEntryCount == 0) {
+                val addStoryBottomSheet = AddStoryBottomSheet().apply {
+                    onFinished = {
+                        pagingAdapter.refresh()
+                        binding.recyclerViewStories.layoutManager?.smoothScrollToPosition(
+                            binding.recyclerViewStories,
+                            null,
+                            0
+                        )
+                    }
+                }
                 addStoryBottomSheet.showNow(childFragmentManager, null)
             }
         }
