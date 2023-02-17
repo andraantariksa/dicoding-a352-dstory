@@ -3,6 +3,7 @@ package my.id.andraaa.dstory.stories.presentor.add_story
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -48,9 +49,9 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                         launch(Dispatchers.IO) {
                             context?.let { context ->
                                 val stream = context.contentResolver.openInputStream(uri)!!
-                                val bytes = stream.readBytes()
+                                val bitmap = BitmapFactory.decodeStream(stream)
                                 stream.close()
-                                viewModel.dispatch(AddStoryAction.ChangeImage(bytes))
+                                viewModel.dispatch(AddStoryAction.ChangeImage(bitmap))
                             }
                         }
                     }
@@ -61,8 +62,8 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                 if (saved) {
                     viewLifecycleOwner.lifecycleScope.launchWhenResumed {
                         launch(Dispatchers.IO) {
-                            val bytes = tempFile.readBytes()
-                            viewModel.dispatch(AddStoryAction.ChangeImage(bytes))
+                            val bitmap = BitmapFactory.decodeStream(tempFile.inputStream())
+                            viewModel.dispatch(AddStoryAction.ChangeImage(bitmap))
                         }
                     }
                 }
@@ -83,6 +84,25 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    private fun validateForm(state: AddStoryState) {
+        var addStoryButtonEnabled = state.formIsValid()
+        if (state.addStoryState is NetworkResource.Loading) {
+            addStoryButtonEnabled = false
+            binding.editTextDescription.isEnabled = false
+            binding.imageViewCamera.isEnabled = false
+            binding.imageViewGallery.isEnabled = false
+            binding.imageViewRemove.isEnabled = false
+            binding.imageViewShareCurrentLocation.isEnabled = false
+        } else {
+            binding.editTextDescription.isEnabled = true
+            binding.imageViewCamera.isEnabled = true
+            binding.imageViewGallery.isEnabled = true
+            binding.imageViewRemove.isEnabled = true
+            binding.imageViewShareCurrentLocation.isEnabled = true
+        }
+        binding.buttonAddStory.isEnabled = addStoryButtonEnabled
+    }
+
     private fun setupUI() = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
         viewModel.state.map { state -> state.image }.distinctUntilChanged().onEach {
             if (it != null) {
@@ -93,22 +113,31 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
             }
         }.launchIn(this)
 
+        viewModel.state.map { state -> state.addStoryState }.distinctUntilChanged().onEach {
+            when (it) {
+                is NetworkResource.Error -> {
+                    binding.textViewFormError.text = "Error: ${it.error.message}"
+                    binding.textViewFormError.setTextColor(
+                        resources.getColor(R.color.danger)
+                    )
+                }
+                is NetworkResource.Loaded -> {
+                    this@AddStoryBottomSheet.onFinished?.invoke()
+                    this@AddStoryBottomSheet.dismiss()
+                }
+                is NetworkResource.Loading -> {
+                    binding.textViewFormError.text =
+                        this@AddStoryBottomSheet.getText(R.string.loading)
+                }
+                null -> {
+                    binding.textViewFormError.text = ""
+                }
+            }
+        }.launchIn(this)
+
         launch {
             viewModel.state.collectLatest {
-                var addStoryButtonEnabled = it.formIsValid()
-                if (it.addStoryState is NetworkResource.Loading) {
-                    addStoryButtonEnabled = false
-                    binding.editTextDescription.isEnabled = false
-                    binding.imageViewCamera.isEnabled = false
-                    binding.imageViewGallery.isEnabled = false
-                    binding.imageViewRemove.isEnabled = false
-                } else {
-                    binding.editTextDescription.isEnabled = true
-                    binding.imageViewCamera.isEnabled = true
-                    binding.imageViewGallery.isEnabled = true
-                    binding.imageViewRemove.isEnabled = true
-                }
-                binding.buttonAddStory.isEnabled = addStoryButtonEnabled
+                validateForm(it)
                 binding.imageViewRemove.isVisible = it.image != null
 
                 if (it.shareCurrentLocation) {
@@ -132,29 +161,6 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                         )
                     )
                     binding.imageViewShareCurrentLocation.setImageResource(R.drawable.baseline_location_on_24)
-                }
-
-                when (it.addStoryState) {
-                    is NetworkResource.Error -> {
-                        binding.textViewFormError.text = "Error: ${it.addStoryState.error.message}"
-                        binding.textViewFormError.setTextColor(
-                            resources.getColor(R.color.danger)
-                        )
-                        binding.buttonAddStory.isEnabled = true
-                    }
-                    is NetworkResource.Loaded -> {
-                        this@AddStoryBottomSheet.onFinished?.invoke()
-                        this@AddStoryBottomSheet.dismiss()
-                    }
-                    is NetworkResource.Loading -> {
-                        binding.textViewFormError.text =
-                            this@AddStoryBottomSheet.getText(R.string.loading)
-                        binding.buttonAddStory.isEnabled = false
-                    }
-                    null -> {
-                        binding.textViewFormError.text = ""
-                        binding.buttonAddStory.isEnabled = true
-                    }
                 }
             }
         }

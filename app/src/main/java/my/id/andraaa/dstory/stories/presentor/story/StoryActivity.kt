@@ -27,6 +27,8 @@ class StoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        postponeEnterTransition()
+
         binding = ActivityStoryBinding.inflate(layoutInflater)
         setupUI()
         setContentView(binding.root)
@@ -48,7 +50,11 @@ class StoryActivity : AppCompatActivity() {
                                 binding.contentError.root.isVisible = false
 
                                 if (story.photoUrl != null) {
-                                    binding.contentStory.imageView.load(story.photoUrl)
+                                    binding.contentStory.imageView.load(story.photoUrl) {
+                                        listener { request, result ->
+                                            startPostponedEnterTransition()
+                                        }
+                                    }
                                     binding.contentStory.imageView.isVisible = true
                                 }
                                 binding.contentStory.textViewAuthor.text = "By ${story.name}"

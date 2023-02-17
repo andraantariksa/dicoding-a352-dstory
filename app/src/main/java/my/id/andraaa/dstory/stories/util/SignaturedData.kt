@@ -1,10 +1,12 @@
 package my.id.andraaa.dstory.stories.util
 
+import android.graphics.Bitmap
+import java.nio.ByteBuffer
 import java.security.MessageDigest
 
-class SignaturedData(private var _value: ByteArray) {
+class SignaturedData(private var _value: Bitmap) {
     private val md5MessageDigest = MessageDigest.getInstance("MD5")
-    var value: ByteArray
+    var value: Bitmap
         get() = _value
         set(newValue) {
             _value = newValue
@@ -21,7 +23,9 @@ class SignaturedData(private var _value: ByteArray) {
     }
 
     fun refreshSignature() {
-        _signature = md5MessageDigest.digest(value)
+        val buffer = ByteBuffer.allocate(value.allocationByteCount)
+        value.copyPixelsToBuffer(buffer)
+        _signature = md5MessageDigest.digest(buffer.array())
     }
 
     override fun equals(other: Any?): Boolean {

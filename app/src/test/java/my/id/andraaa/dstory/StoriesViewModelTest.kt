@@ -106,7 +106,7 @@ class StoriesViewModelTest {
 
         advanceUntilIdle()
 
-        assertEquals(listOf<Story>(), differ.snapshot().items)
+        assertEquals(0, differ.snapshot().size)
 
         job.cancel()
     }

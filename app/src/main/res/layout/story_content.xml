@@ -12,6 +12,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/story_image"
         android:maxHeight="256dp"
+        android:transitionName="storyImage"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

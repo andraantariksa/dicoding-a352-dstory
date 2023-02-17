@@ -1,5 +1,6 @@
 package my.id.andraaa.dstory.stories.domain
 
+import android.graphics.Bitmap
 import my.id.andraaa.dstory.stories.data.DicodingStoryDataSourceImpl
 import my.id.andraaa.dstory.stories.data.service.response.Story
 
@@ -11,6 +12,6 @@ interface DicodingStoryDataSource {
 
     suspend fun getStory(id: String): Story
     suspend fun addStory(
-        imageBytes: ByteArray, description: String, lat: Float?, lon: Float?
+        bitmap: Bitmap, description: String, lat: Float?, lon: Float?
     )
 }

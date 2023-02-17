@@ -1,5 +1,6 @@
 package my.id.andraaa.dstory.stories.data
 
+import android.graphics.Bitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.id.andraaa.dstory.stories.data.service.DicodingStoryService
@@ -8,6 +9,7 @@ import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 
 class DicodingStoryDataSourceImpl(
     private val dicodingStoryService: DicodingStoryService,
@@ -48,10 +50,14 @@ class DicodingStoryDataSourceImpl(
     }
 
     override suspend fun addStory(
-        imageBytes: ByteArray, description: String, lat: Float?, lon: Float?
+        bitmap: Bitmap, description: String, lat: Float?, lon: Float?
     ): Unit = withContext(Dispatchers.IO) {
-        val body = imageBytes.toRequestBody(
-            "multipart/form-data".toMediaTypeOrNull(), 0, imageBytes.size
+        val bytesStream = ByteArrayOutputStream(bitmap.allocationByteCount)
+        bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 0, bytesStream)
+
+        val bytes = bytesStream.toByteArray()
+        val body = bytes.toRequestBody(
+            "multipart/form-data".toMediaTypeOrNull(), 0, bytes.size
         )
 
         val filePart = MultipartBody.Part.createFormData(

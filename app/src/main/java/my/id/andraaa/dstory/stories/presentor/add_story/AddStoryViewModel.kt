@@ -3,6 +3,7 @@ package my.id.andraaa.dstory.stories.presentor.add_story
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
@@ -18,7 +19,7 @@ import my.id.andraaa.dstory.stories.util.SignaturedData
 object AddStorySideEffect
 
 sealed class AddStoryAction {
-    class ChangeImage(val value: ByteArray) : AddStoryAction()
+    class ChangeImage(val value: Bitmap) : AddStoryAction()
     class ChangeDescription(val value: String) : AddStoryAction()
     class ProceedAddStory(val context: Context) : AddStoryAction()
     object Reset : AddStoryAction()
@@ -46,7 +47,12 @@ class AddStoryViewModel(
             is AddStoryAction.ChangeDescription -> state.copy(description = action.value)
             is AddStoryAction.ProceedAddStory -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    addStory(action.context, state.image, state.description)
+                    if (state.image != null) {
+                        addStory(action.context, state.image, state.description)
+                    } else {
+                        _state.value =
+                            state.copy(addStoryState = NetworkResource.Error(Exception("Image is not select")))
+                    }
                 }
                 state
             }
@@ -56,7 +62,7 @@ class AddStoryViewModel(
         }
     }
 
-    private suspend fun addStory(context: Context?, image: SignaturedData?, description: String) {
+    private suspend fun addStory(context: Context?, image: SignaturedData, description: String) {
         _state.value = state.value.copy(addStoryState = NetworkResource.Loading())
         val location = if (context != null && (ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.ACCESS_COARSE_LOCATION
@@ -75,7 +81,7 @@ class AddStoryViewModel(
 
         try {
             dicodingStoryDataSource.addStory(
-                image?.value ?: ByteArray(0),
+                image.value,
                 description,
                 location?.latitude?.toFloat(),
                 location?.longitude?.toFloat()
