@@ -20,12 +20,13 @@ class StoryActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        storyId = intent.getStringExtra(STORY_ID_EXTRA) ?: ""
         viewModel.dispatch(StoryAction.LoadStory(storyId))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        storyId = intent.getStringExtra(STORY_ID_EXTRA) ?: ""
 
         postponeEnterTransition()
 
@@ -35,6 +36,7 @@ class StoryActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        binding.contentStory.imageView.transitionName = "storyImage:${storyId}"
         binding.contentError.buttonRetry.setOnClickListener {
             viewModel.dispatch(StoryAction.LoadStory(storyId))
         }

@@ -26,21 +26,21 @@ class StoryViewHolder(
         }
 
         binding.contentStoryItem.apply {
+            imageView.transitionName = "storyImage:${story.id}"
             imageView.load(story.photoUrl)
             textViewDescription.text = story.description
             textViewAuthor.text = story.name
 
-            val context = root.context
-            val activity = context as? Activity
-            val options = activity?.let {
-                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    it,
-                    binding.contentStoryItem.imageView,
-                    "storyImage"
-                )
-            }
             cardStory.setOnClickListener {
-                val intent = Intent(activity ?: context, StoryActivity::class.java).apply {
+                val context = root.context
+                val options = (context as? Activity)?.let {
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        it,
+                        binding.contentStoryItem.imageView,
+                        imageView.transitionName
+                    )
+                }
+                val intent = Intent(context, StoryActivity::class.java).apply {
                     putExtra(StoryActivity.STORY_ID_EXTRA, story.id)
                 }
                 context.startActivity(intent, options?.toBundle())
