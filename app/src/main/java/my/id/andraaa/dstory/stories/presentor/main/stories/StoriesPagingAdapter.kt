@@ -10,11 +10,10 @@ import my.id.andraaa.dstory.stories.data.service.response.Story
 class StoriesPagingAdapter(
     diffCallback: DiffUtil.ItemCallback<Story>,
 ) : PagingDataAdapter<Story, StoryViewHolder>(diffCallback) {
-    private val loadingViewHolderPositions = mutableSetOf<Int>()
-
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story, loadingViewHolderPositions)
+        holder.bind(story)
+        holder.show()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {

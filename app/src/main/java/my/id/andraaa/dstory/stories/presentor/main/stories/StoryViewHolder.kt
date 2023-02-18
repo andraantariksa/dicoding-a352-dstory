@@ -2,10 +2,10 @@ package my.id.andraaa.dstory.stories.presentor.main.stories
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Activity
 import android.content.Intent
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import my.id.andraaa.dstory.databinding.StoryItemBinding
@@ -18,7 +18,7 @@ class StoryViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     private var seen = false
 
-    fun bind(story: Story?, loadingViewHolderPositions: MutableSet<Int>) {
+    fun bind(story: Story?) {
         if (story == null) {
             binding.contentStoryPlaceholderItem.root.isVisible = true
             binding.contentStoryItem.root.isVisible = false
@@ -31,7 +31,8 @@ class StoryViewHolder(
             textViewAuthor.text = story.name
 
             val context = root.context
-            val options = (context as? FragmentActivity)?.let {
+            val activity = context as? Activity
+            val options = activity?.let {
                 ActivityOptionsCompat.makeSceneTransitionAnimation(
                     it,
                     binding.contentStoryItem.imageView,
@@ -39,21 +40,20 @@ class StoryViewHolder(
                 )
             }
             cardStory.setOnClickListener {
-                val intent = Intent(context, StoryActivity::class.java).apply {
+                val intent = Intent(activity ?: context, StoryActivity::class.java).apply {
                     putExtra(StoryActivity.STORY_ID_EXTRA, story.id)
                 }
                 context.startActivity(intent, options?.toBundle())
             }
         }
-        show(loadingViewHolderPositions)
     }
 
-    fun show(loadingViewHolderPositions: MutableSet<Int>) {
+    fun show() {
         if (seen) return
 
         seen = true
 
-        val duration = 500L + 200L * loadingViewHolderPositions.size
+        val duration = 700L
         binding.contentStoryPlaceholderItem.root.apply {
             animate().alpha(0.0F).setStartDelay(duration).setDuration(
                 CROSSFADE_DURATION

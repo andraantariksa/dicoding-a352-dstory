@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import my.id.andraaa.dstory.databinding.FragmentStoriesBinding
 import my.id.andraaa.dstory.stories.data.service.response.Story
 import my.id.andraaa.dstory.stories.presentor.add_story.AddStoryBottomSheet
@@ -55,32 +57,32 @@ class StoriesFragment : Fragment() {
 
         binding.recyclerViewStories.adapter = pagingAdapter
         binding.recyclerViewStories.addItemDecoration(SpaceItemDecoration(4, 32))
-        binding.floatingActionButton.setOnClickListener {
-            if (childFragmentManager.backStackEntryCount == 0) {
-                val addStoryBottomSheet = AddStoryBottomSheet().apply {
-                    onFinished = {
-                        pagingAdapter.refresh()
-                        binding.recyclerViewStories.layoutManager?.smoothScrollToPosition(
-                            binding.recyclerViewStories,
-                            null,
-                            0
-                        )
-                    }
-                }
-                addStoryBottomSheet.showNow(childFragmentManager, null)
-            }
-        }
         binding.errorContent.buttonRetry.setOnClickListener {
             pagingAdapter.retry()
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            binding.floatingActionButton.setOnClickListener {
+                if (childFragmentManager.backStackEntryCount == 0) {
+                    val addStoryBottomSheet = AddStoryBottomSheet().apply {
+                        onFinished = {
+                            launch {
+                                pagingAdapter.refresh()
+                                pagingAdapter.onPagesUpdatedFlow.first()
+                                binding.recyclerViewStories.layoutManager?.scrollToPosition(0)
+                            }
+                        }
+                    }
+                    addStoryBottomSheet.showNow(childFragmentManager, null)
+                }
+            }
+
             viewModel.storiesFlow
                 .onEach {
                     pagingAdapter.submitData(it)
                 }
                 .flowOn(Dispatchers.IO)
-                .launchIn(this@launchWhenResumed)
+                .launchIn(this)
 
 //            viewModel.state.onEach { state ->
 //                pagingAdapter.loadStateFlow.onEach {

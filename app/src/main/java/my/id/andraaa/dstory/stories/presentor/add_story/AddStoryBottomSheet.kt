@@ -3,7 +3,10 @@ package my.id.andraaa.dstory.stories.presentor.add_story
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -62,8 +65,52 @@ class AddStoryBottomSheet : BottomSheetDialogFragment() {
                 if (saved) {
                     viewLifecycleOwner.lifecycleScope.launchWhenResumed {
                         launch(Dispatchers.IO) {
-                            val bitmap = BitmapFactory.decodeStream(tempFile.inputStream())
-                            viewModel.dispatch(AddStoryAction.ChangeImage(bitmap))
+                            context?.let {
+                                val exif = ExifInterface(tempFile)
+                                val matrix = Matrix()
+                                when (exif.getAttributeInt(
+                                    ExifInterface.TAG_ORIENTATION,
+                                    ExifInterface.ORIENTATION_UNDEFINED
+                                )) {
+                                    ExifInterface.ORIENTATION_ROTATE_90 -> {
+                                        matrix.setRotate(90F)
+                                    }
+                                    ExifInterface.ORIENTATION_ROTATE_180 -> {
+                                        matrix.setRotate(180F)
+                                    }
+                                    ExifInterface.ORIENTATION_ROTATE_270 -> {
+                                        matrix.setRotate(270F)
+                                    }
+                                    ExifInterface.ORIENTATION_TRANSVERSE -> {
+                                        matrix.setRotate(-90F)
+                                        matrix.postScale(-1F, 1F)
+                                    }
+                                    ExifInterface.ORIENTATION_TRANSPOSE -> {
+                                        matrix.setRotate(90F)
+                                        matrix.postScale(-1F, 1F)
+                                    }
+                                    ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+                                        matrix.setRotate(180F)
+                                        matrix.postScale(-1F, 1F)
+                                    }
+                                    ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> {
+                                        matrix.setScale(-1F, 1F)
+                                    }
+                                }
+
+                                val decodedBitmap =
+                                    BitmapFactory.decodeStream(tempFile.inputStream())
+                                val bitmap = Bitmap.createBitmap(
+                                    decodedBitmap,
+                                    0,
+                                    0,
+                                    decodedBitmap.width,
+                                    decodedBitmap.height,
+                                    matrix,
+                                    true
+                                )
+                                viewModel.dispatch(AddStoryAction.ChangeImage(bitmap))
+                            }
                         }
                     }
                 }

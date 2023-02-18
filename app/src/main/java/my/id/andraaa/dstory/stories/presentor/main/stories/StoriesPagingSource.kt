@@ -8,7 +8,7 @@ import my.id.andraaa.dstory.stories.domain.DicodingStoryDataSource
 class StoriesPagingSource(
     private val dicodingStoryDataSource: DicodingStoryDataSource
 ) : PagingSource<Int, Story>() {
-    override fun getRefreshKey(state: PagingState<Int, Story>): Int? = state.anchorPosition
+    override fun getRefreshKey(state: PagingState<Int, Story>): Int? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Story> {
         val currentPage = params.key ?: 1

@@ -1,6 +1,8 @@
 <resources>
 
     <style name="Theme.DStory" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
+
         <item name="colorPrimary">@color/redish</item>
         <item name="colorSecondary">@color/pink</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
