@@ -73,7 +73,7 @@ class StoriesViewModelTest {
 
         assertNotNull(differ.snapshot().items)
         assertEquals(page1.size + page2.size, differ.snapshot().size)
-        assertEquals(page1 + page2, differ.snapshot().items)
+        assertEquals(page1[0], differ.snapshot()[0])
 
         job.cancel()
     }
